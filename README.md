@@ -4,6 +4,7 @@ Track the performance impact for a given function incluing various async callbac
 
 
 Usage:
+------
 
 ```js
 import {
@@ -16,3 +17,7 @@ attach();
 timeAndLog(initModuleA, 'MyMessage', 'ModuleAContext', 'GeneralScope');
 
 ```
+
+TODO
+----
+* More generic API: don't depend on detox-instruments-react-native-utils
