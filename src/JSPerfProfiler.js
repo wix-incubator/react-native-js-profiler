@@ -169,10 +169,7 @@ const defineProperty = (object, name, value) => {
   const descriptor = Object.getOwnPropertyDescriptor(object, name);
   if (__DEV__ && descriptor) {
     const backupName = `originalRN${name[0].toUpperCase()}${name.substr(1)}`;
-    Object.defineProperty(object, backupName, {
-      ...descriptor,
-      value: object[name],
-    });
+    Object.defineProperty(object, backupName, descriptor);
   }
 
   const {enumerable, writable, configurable} = descriptor || {};
@@ -198,4 +195,3 @@ const now = (() => {
 
 // Used in unit tests
 export const $require = require;
-
