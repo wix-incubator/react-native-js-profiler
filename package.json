@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "release": "node ./scripts/release.js"
   },
   "repository": {
     "type": "git",
