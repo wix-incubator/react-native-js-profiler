@@ -34,14 +34,14 @@ export const clearPerfInfo = () => {
 export const timeAndLog = (fn, message, context, scope = 'General') => {
   /* istanbul ignore else */
   if (__DEV__) {
-    const event = new Event(scope, message);
+    const event = new Event(scope, `${message} [${context}]`);
     event.beginInterval(context);
     executeInContext(context, fn);
     event.endInterval(Event.EventStatus.completed);
   } else {
     fn();
   }
-};
+}
 
 export const attach = () => {
   if (__DEV__) {
@@ -63,9 +63,11 @@ export const attachRequire = () => {
   /* istanbul ignore else */
   if (require.Systrace) {
     require.Systrace.beginEvent = (message) => {
-      const event = new Event('Systrace', 'require');
+      const context = contextStack.join('->');
       const skip = !message || message.indexOf('JS_require_') !== 0;
-      const finalDescription = `${message} ([${contextStack.join('->')}])`;
+      message = message && message.substr('JS_require_'.length);
+      const event = !skip && new Event('Systrace', `require(${message}) [${context}]`);
+      const finalDescription = `${message} ([${context}])`;
       eventsStack.push({event, skip});
       if (!skip) {
         event.beginInterval(finalDescription);
@@ -86,11 +88,9 @@ const patchTimer = (timerName) => {
   const patchedTimer = (fn, ...args) => {
     let context = getContext();
     // if (!context) { debugger; };
-    return originalTimer((...a) => timeAndLog(
-      () => fn(...a),
-      timerName,
+    return originalTimer((...a) => executeInContext(
       context,
-      'Timer'
+      () => fn(...a),
     ), ...args);
   };
   JSTimers[timerName] = patchedTimer;

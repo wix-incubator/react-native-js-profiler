@@ -72,11 +72,11 @@ describe('JSPerfProfiler', () => {
   it('Should create events for DetoxInstruments', () => {
     JSPerfProfiler.attach();
     JSPerfProfiler.$require.Systrace.beginEvent('JS_require_');
-    expect(mockBeginInterval).toHaveBeenCalledWith('JS_require_ ([])');
+    expect(mockBeginInterval).toHaveBeenCalledWith(' ([])');
     JSPerfProfiler.$require.Systrace.endEvent();
     expect(mockEndInterval).toHaveBeenCalledTimes(1);
     expect(mockEventConstructor.mock.calls).toEqual([
-      ['Systrace', 'require'],
+      ['Systrace', 'require() []'],
     ]);
   });
 
@@ -110,7 +110,7 @@ describe('JSPerfProfiler', () => {
   it('should time and log events', () => {
     JSPerfProfiler.timeAndLog(() => {}, 'testMessage', 'testModule');
     expect(mockEventConstructor.mock.calls).toEqual([
-      ['General', 'testMessage'],
+      ['General', 'testMessage [testModule]'],
     ]);
     expect(mockBeginInterval).toHaveBeenCalledWith('testModule');
     expect(mockEndInterval).toHaveBeenCalledWith(undefined);
