@@ -68,6 +68,6 @@
     }
   },
   "dependencies": {
-    "detox-instruments-react-native-utils": "^2.0.2"
+    "detox-instruments-react-native-utils": "3.x.x"
   }
 }
