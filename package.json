@@ -34,7 +34,7 @@
     "react-native": "^0.57.x",
     "semver": "5.x.x",
     "shell-utils": "1.x.x",
-    "lodash": "4.x.x"
+    "lodash": ">=4.17.5"
   },
   "babel": {
     "env": {
