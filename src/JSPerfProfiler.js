@@ -34,8 +34,8 @@ export const clearPerfInfo = () => {
 export const timeAndLog = (fn, message, context, scope = 'General') => {
   /* istanbul ignore else */
   if (__DEV__) {
-    const event = new Event(scope, `${message} [${context}]`);
-    event.beginInterval(context);
+    const event = new Event(scope, message);
+    event.beginInterval(`${message} [${context}]`);
     executeInContext(context, fn);
     event.endInterval(Event.EventStatus.completed);
   } else {
@@ -66,7 +66,7 @@ export const attachRequire = () => {
       const context = contextStack.join('->');
       const skip = !message || message.indexOf('JS_require_') !== 0;
       message = message && message.substr('JS_require_'.length);
-      const event = !skip && new Event('Systrace', `require(${message}) [${context}]`);
+      const event = !skip && new Event('Systrace', `require()`);
       const finalDescription = `${message} ([${context}])`;
       eventsStack.push({event, skip});
       if (!skip) {
