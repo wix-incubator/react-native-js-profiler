@@ -36,10 +36,11 @@ export const timeAndLog = (fn, message, context, scope = 'General') => {
   if (__DEV__) {
     const event = new Event(scope, message);
     event.beginInterval(`${message} [${context}]`);
-    executeInContext(context, fn);
+    const result = executeInContext(context, fn);
     event.endInterval(Event.EventStatus.completed);
+    return result;
   } else {
-    fn();
+    return fn();
   }
 }
 
