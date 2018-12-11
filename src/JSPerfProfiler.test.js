@@ -116,6 +116,12 @@ describe('JSPerfProfiler', () => {
     expect(mockEndInterval).toHaveBeenCalledWith(undefined);
   });
 
+
+  it('should return results from time and log events', () => {
+    const result = JSPerfProfiler.timeAndLog(() => 'RESULT', 'testMessage', 'testModule');
+    expect(result).toEqual('RESULT');
+  });
+
   it('Should track context for timers', (done) => {
     const JSTimers = require('react-native/Libraries/Core/Timers/JSTimers');
     JSPerfProfiler.executeInContext('testContext', () => {
