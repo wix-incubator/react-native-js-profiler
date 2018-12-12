@@ -5,25 +5,34 @@ const contextStack = [];
 const accTimeByContext = {};
 
 let timer;
+let previousMessage;
 
-export const executeInContext = (context, fn, ...args) => {
+export const executeInContext = (context, message, fn, ...args) => {
   if (!accTimeByContext[context]) {
-    accTimeByContext[context] = 0;
+    accTimeByContext[context] = {};
   }
   const prevContext = getContext();
   if (prevContext) {
-    accTimeByContext[prevContext] += (now() - timer);
+    if (!accTimeByContext[prevContext][previousMessage]){
+      accTimeByContext[prevContext][previousMessage] = 0
+    }
+    accTimeByContext[prevContext][previousMessage] += (now() - timer);
   }
+  previousMessage = message
   timer = now();
   contextStack.push(context);
   const result = fn(...args);
   contextStack.pop();
-  accTimeByContext[context] += (now() - timer);
+  if (!accTimeByContext[context][message]){
+    accTimeByContext[context][message] = 0
+  }
+  accTimeByContext[context][message] += (now() - timer);
   timer = now();
+  previousMessage = message
   return result;
 };
 
-const bindContext = (context, fn) => (...args) => executeInContext(context, fn, ...args);
+const bindContext = (context,message, fn) => (...args) => executeInContext(context, message, fn, ...args);
 
 export const getContext = () => contextStack[contextStack.length - 1];
 export const getPerfInfo = () => accTimeByContext;
@@ -36,7 +45,7 @@ export const timeAndLog = (fn, message, context, scope = 'General') => {
   if (__DEV__) {
     const event = new Event(scope, message);
     event.beginInterval(`${message} [${context}]`);
-    const result = executeInContext(context, fn);
+    const result = executeInContext(context,message, fn);
     event.endInterval(Event.EventStatus.completed);
     return result;
   } else {
@@ -91,6 +100,7 @@ const patchTimer = (timerName) => {
     // if (!context) { debugger; };
     return originalTimer((...a) => executeInContext(
       context,
+      timerName,
       () => fn(...a),
     ), ...args);
   };
@@ -106,7 +116,7 @@ const patchAnimated = () => {
     if (!context) {
       context = 'untrackableAnimation';
     };
-    return orig(node, nodeTag, config, bindContext(context, endCallback));
+    return orig(node, nodeTag, config, bindContext(context, "NativeAnimatedHelper" , endCallback));
   }
 }
 
@@ -116,13 +126,15 @@ const patchBridge = () => {
 
   BatchedBridge.enqueueNativeCall = (moduleID, methodID, args, resolve, reject) => {
     let context = getContext();
+    const moduleName = BatchedBridge._remoteModuleTable[moduleID]
+    const methodName = BatchedBridge._remoteMethodTable[moduleID][methodID]
     // if ((resolve || reject) && !context) { debugger; };
     return orig(
       moduleID,
       methodID,
       args,
-      resolve && bindContext(context, resolve),
-      reject && bindContext(context, reject),
+      resolve && bindContext(context, `${moduleName}: ${methodName}`, resolve),
+      reject && bindContext(context, `${moduleName}: ${methodName}` , reject),
     );
   };
 };
@@ -137,7 +149,7 @@ const patchEventEmitter = () => {
     return orig.call(
       this,
       eventType,
-      bindContext(context, listener),
+      bindContext(context, "NativeEventEmitter", listener),
       ...a
     );
   };
@@ -162,7 +174,7 @@ const patchAppRegistry = () => {
   AppRegistry.runApplication = (appKey, ...args) => {
     let context = contextsByAppKeys[appKey];
     // if (!context) { debugger; };
-    return executeInContext(context, origRun, appKey, ...args);
+    return executeInContext(context, "patchAppRegistry", origRun, appKey, ...args);
   };
 };
 
