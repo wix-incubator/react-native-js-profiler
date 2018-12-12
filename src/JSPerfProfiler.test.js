@@ -34,6 +34,8 @@ jest.mock('react-native/Libraries/BatchedBridge/BatchedBridge', () => {
       cb = onSuccess;
     },
     __mockInvokeCallback: () => cb(),
+    _remoteModuleTable:{"0" : "moduleName"},
+    _remoteMethodTable:{"0" : ["methodName"]}
   };
 });
 
@@ -124,9 +126,10 @@ describe('JSPerfProfiler', () => {
 
   it('Should track context for timers', (done) => {
     const JSTimers = require('react-native/Libraries/Core/Timers/JSTimers');
-    JSPerfProfiler.executeInContext('testContext', () => {
+    JSPerfProfiler.executeInContext('testContext', "message", () => {
       JSTimers.setTimeout(() => {
         expect(JSPerfProfiler.getContext()).toBe('testContext');
+        expect(JSPerfProfiler.getPerfInfo()["testContext"]).toHaveProperty('message');
         done();
       }, 1);
     });
@@ -135,17 +138,19 @@ describe('JSPerfProfiler', () => {
   it('Should track context for Bridge', (done) => {
     const BatchedBridge = require('react-native/Libraries/BatchedBridge/BatchedBridge');
     // BatchedBridge.createDebugLookup(1, 'test', ['a'])
-    JSPerfProfiler.executeInContext('testContext', () => {
+    JSPerfProfiler.executeInContext('testContext',"message", () => {
       BatchedBridge.enqueueNativeCall(
-        '',
-        '',
+        0,
+        0,
         [],
         () => {
           expect(JSPerfProfiler.getContext()).toBe('testContext');
+          expect(JSPerfProfiler.getPerfInfo()["testContext"]).toHaveProperty('message');
           done();
         },
         () => {
           expect(JSPerfProfiler.getContext()).toBe('testContext');
+          expect(JSPerfProfiler.getPerfInfo()["testContext"]).toHaveProperty('message');
           done();
         },
       );
@@ -156,9 +161,10 @@ describe('JSPerfProfiler', () => {
   it('Should track context for EventEmitter', (done) => {
     const NativeEventEmitter = require('react-native/Libraries/EventEmitter/NativeEventEmitter');
     const emitter = new NativeEventEmitter();
-    JSPerfProfiler.executeInContext('testContext', () => {
+    JSPerfProfiler.executeInContext('testContext',"message", () => {
       emitter.addListener('tev', () => {
         expect(JSPerfProfiler.getContext()).toBe('testContext');
+        expect(JSPerfProfiler.getPerfInfo()["testContext"]).toHaveProperty('message');
         done();
       }, 1);
     });
@@ -167,9 +173,10 @@ describe('JSPerfProfiler', () => {
 
   it('Should track context for AppRegistry', (done) => {
     const {AppRegistry} = require('react-native');
-    JSPerfProfiler.executeInContext('testContext', () => {
+    JSPerfProfiler.executeInContext('testContext',"message", () => {
       AppRegistry.registerComponent('TestApp', () => {
         expect(JSPerfProfiler.getContext()).toBe('testContext');
+        expect(JSPerfProfiler.getPerfInfo()["testContext"]).toHaveProperty('message');
         done();
       });
     });
@@ -178,9 +185,10 @@ describe('JSPerfProfiler', () => {
 
   it('Should track context for Animated', (done) => {
     const NativeAnimatedHelper = require('react-native/Libraries/Animated/src/NativeAnimatedHelper');
-    JSPerfProfiler.executeInContext('testContext', () => {
+    JSPerfProfiler.executeInContext('testContext',"message", () => {
       NativeAnimatedHelper.API.startAnimatingNode('', '', '', () => {
         expect(JSPerfProfiler.getContext()).toBe('testContext');
+        expect(JSPerfProfiler.getPerfInfo()["testContext"]).toHaveProperty('message');
         done();
       });
     });
