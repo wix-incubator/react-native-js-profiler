@@ -1,12 +1,5 @@
 # How it works
 
-When working with a large React Native application, consisting of many more or less independent modules, 
-there is a need to know how much each of them affected the JS thread.
- 
-This projects tries to measure the performance impact on JS thread by different app modules.
-It attempts to do so by measuring execution time in of a given function and also measuring callbacks
-of asynchronous operations starting inside.
-
 Consider this example:
 
 ```js
