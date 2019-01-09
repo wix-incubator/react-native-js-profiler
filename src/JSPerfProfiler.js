@@ -123,7 +123,9 @@ const patchAnimated = () => {
 const patchBridge = () => {
   const BatchedBridge = require('react-native/Libraries/BatchedBridge/BatchedBridge');
   const orig = BatchedBridge.enqueueNativeCall.bind(BatchedBridge);
-
+  if (!BatchedBridge._remoteModuleTable || !BatchedBridge._remoteMethodTable) {
+    return;
+  }
   BatchedBridge.enqueueNativeCall = (moduleID, methodID, args, resolve, reject) => {
     let context = getContext();
     const moduleName = BatchedBridge._remoteModuleTable[moduleID]
