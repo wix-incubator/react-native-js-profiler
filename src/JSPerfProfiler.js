@@ -198,6 +198,7 @@ const defineProperty = (object, name, value) => {
     value,
     enumerable: enumerable !== false,
     writable: writable !== false,
+    configurable: true,
   });
 };
 
