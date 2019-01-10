@@ -182,7 +182,7 @@ const patchAppRegistry = () => {
 
 const defineProperty = (object, name, value) => {
   const descriptor = Object.getOwnPropertyDescriptor(object, name);
-  if (__DEV__ && descriptor) {
+  if (descriptor) {
     const backupName = `originalRN${name[0].toUpperCase()}${name.substr(1)}`;
     Object.defineProperty(object, backupName, descriptor);
   }
