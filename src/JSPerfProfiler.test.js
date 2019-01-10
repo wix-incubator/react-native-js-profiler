@@ -1,5 +1,3 @@
-import * as JSPerfProfiler from './JSPerfProfiler';
-
 const mockEventConstructor = jest.fn();
 const mockBeginInterval = jest.fn();
 const mockEndInterval = jest.fn();
@@ -56,8 +54,11 @@ jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper', () => {
 });
 
 describe('JSPerfProfiler', () => {
+  let JSPerfProfiler;
 
   beforeEach(() => {
+    jest.resetModules();
+    JSPerfProfiler = require('./JSPerfProfiler');
     JSPerfProfiler.$require.Systrace = {};
     JSPerfProfiler.attach();
   });

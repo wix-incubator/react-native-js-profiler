@@ -1,5 +1,7 @@
 import {Event} from 'detox-instruments-react-native-utils';
 
+let __ENABLED__ = false;
+
 const contextStack = [];
 
 const accTimeByContext = {};
@@ -42,7 +44,7 @@ export const clearPerfInfo = () => {
 
 export const timeAndLog = (fn, message, context, scope = 'General') => {
   /* istanbul ignore else */
-  if (__DEV__) {
+  if (__ENABLED__) {
     const event = new Event(scope, message);
     event.beginInterval(`${message} [${context}]`);
     const result = executeInContext(context,message, fn);
@@ -54,7 +56,10 @@ export const timeAndLog = (fn, message, context, scope = 'General') => {
 }
 
 export const attach = () => {
-  if (__DEV__) {
+    if (__ENABLED__) {
+      return;
+    }
+
     attachRequire();
     patchTimer('setTimeout');
     patchTimer('setInterval');
@@ -65,7 +70,8 @@ export const attach = () => {
     patchEventEmitter();
     patchAppRegistry();
     patchAnimated();
-  }
+
+    __ENABLED__ = true;
 };
 
 export const attachRequire = () => {
