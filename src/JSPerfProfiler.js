@@ -77,7 +77,7 @@ export const attach = () => {
 export const attachRequire = () => {
   const eventsStack = [];
   /* istanbul ignore else */
-  if (require.Systrace) {
+  if (require.Systrace && Event) {
     require.Systrace.beginEvent = (message) => {
       const context = contextStack.join('->');
       const skip = !message || message.indexOf('JS_require_') !== 0;
