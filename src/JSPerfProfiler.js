@@ -115,7 +115,7 @@ const patchTimer = (timerName) => {
 };
 
 const patchAnimated = () => {
-  const NativeAnimatedHelper = require('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+  const NativeAnimatedHelper = require('react-native/Libraries/Animated/NativeAnimatedHelper');
   const orig = NativeAnimatedHelper.API.startAnimatingNode;
   NativeAnimatedHelper.API.startAnimatingNode = (node, nodeTag, config, endCallback) => {
     let context = getContext();

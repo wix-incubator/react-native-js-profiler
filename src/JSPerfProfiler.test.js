@@ -41,7 +41,7 @@ jest.mock('react-native/Libraries/Core/Timers/JSTimers', () => ({
   setTimeout: mockTimeout,
 }));
 
-jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper', () => {
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper', () => {
   let cb;
   return {
     API: {
@@ -185,7 +185,7 @@ describe('JSPerfProfiler', () => {
   });
 
   it('Should track context for Animated', (done) => {
-    const NativeAnimatedHelper = require('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+    const NativeAnimatedHelper = require('react-native/Libraries/Animated/NativeAnimatedHelper');
     JSPerfProfiler.executeInContext('testContext',"message", () => {
       NativeAnimatedHelper.API.startAnimatingNode('', '', '', () => {
         expect(JSPerfProfiler.getContext()).toBe('testContext');
