@@ -148,7 +148,7 @@ const patchBridge = () => {
 };
 
 const patchEventEmitter = () => {
-  const NativeEventEmitter = require('react-native/Libraries/EventEmitter/NativeEventEmitter');
+  const NativeEventEmitter = require('react-native/Libraries/EventEmitter/NativeEventEmitter').default;
   const orig = NativeEventEmitter.prototype.addListener;
 
   NativeEventEmitter.prototype.addListener = function (eventType, listener, ...a) {
