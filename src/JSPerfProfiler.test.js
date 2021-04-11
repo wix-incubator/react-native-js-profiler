@@ -13,7 +13,10 @@ jest.mock('detox-instruments-react-native-utils', () => ({
   Event: mockEvent,
 }));
 
-jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter', () => require('events'));
+jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter', () => ({
+  __esModule: true,
+  default: require('events')
+}));
 
 jest.mock('react-native', () => {
   const apps = {};
@@ -160,7 +163,7 @@ describe('JSPerfProfiler', () => {
   });
 
   it('Should track context for EventEmitter', (done) => {
-    const NativeEventEmitter = require('react-native/Libraries/EventEmitter/NativeEventEmitter');
+    const NativeEventEmitter = require('react-native/Libraries/EventEmitter/NativeEventEmitter').default;
     const emitter = new NativeEventEmitter();
     JSPerfProfiler.executeInContext('testContext',"message", () => {
       emitter.addListener('tev', () => {
